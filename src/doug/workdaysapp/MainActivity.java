@@ -2,6 +2,10 @@ package doug.workdaysapp;
 
 import java.util.List;
 
+import models.Workday;
+
+import database.connections.WorkdayDataSource;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;

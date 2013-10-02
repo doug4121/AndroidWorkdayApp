@@ -1,4 +1,4 @@
-package doug.workdaysapp;
+package models;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,11 +12,11 @@ public class Workday implements Serializable{
 	private Date date;
 	private String shift;
 	private String job;
-	private double payScale;
-	private double overtimePayScale;
 	private String foremanName;
 	private double hours;
 	private double overtimeHours;
+	private double payscale;
+	private double overtimePayscale;
 	private String comment;
 	
 	// getter/setter id
@@ -57,26 +57,6 @@ public class Workday implements Serializable{
 		this.job = job;
 	}
 	
-	// getter/setter payScale
-	public double getPayScale()
-	{
-		return this.payScale;
-	}
-	public void setPayScale(double payScale)
-	{
-		this.payScale = payScale;
-	}
-	
-	// getter/setter overtimePayScale
-	public double getOvertimePayScale()
-	{
-		return this.overtimePayScale;
-	}
-	public void setOvertimePayScale(double overtimePayScale)
-	{
-		this.overtimePayScale = overtimePayScale;
-	}
-	
 	// getter/setter foreman
 	public String getForemanName()
 	{
@@ -107,6 +87,26 @@ public class Workday implements Serializable{
 		this.overtimeHours = overtimeHours;
 	}
 	
+	// getter/setter payScale
+	public double getPayscale()
+	{
+		return this.payscale;
+	}
+	public void setPayscale(double payscale)
+	{
+		this.payscale = payscale;
+	}
+	
+	// getter/setter overtimePayScale
+	public double getOvertimePayscale()
+	{
+		return this.overtimePayscale;
+	}
+	public void setOvertimePayscale(double overtimePayscale)
+	{
+		this.overtimePayscale = overtimePayscale;
+	}
+	
 	// getter/setter comments
 	public String getComment()
 	{
@@ -126,5 +126,28 @@ public class Workday implements Serializable{
 	public String dateToString()
 	{
 		return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getYear();
+	}
+	
+	public static Workday generateWorkday(long id, Date date, String shift, String job, String foremanName, double hours, double overtimeHours, double payscale, double overtimePayscale, String comment)
+	{
+		Workday outputWorkday = new Workday();
+		
+		outputWorkday.setId(id);
+		outputWorkday.setDate(date);
+		outputWorkday.setShift(shift);
+		outputWorkday.setJob(job);
+		outputWorkday.setForemanName(foremanName);
+		outputWorkday.setHours(hours);
+		outputWorkday.setOvertimeHours(overtimeHours);
+		outputWorkday.setPayscale(payscale);
+		outputWorkday.setOvertimePayscale(overtimePayscale);
+		outputWorkday.setComment(comment);
+		
+		return outputWorkday;
+	}
+	
+	public static Workday generateWorkday(Date date, String shift, String job, String foremanName, double hours, double overtimeHours, double payscale, double overtimePayscale, String comment)
+	{
+		return generateWorkday(0, date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
 	}
 }

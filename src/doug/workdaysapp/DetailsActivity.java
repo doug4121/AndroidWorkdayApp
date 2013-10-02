@@ -1,15 +1,24 @@
 package doug.workdaysapp;
 
+import commands.DeleteWorkdayCommand;
+import commands.GetWorkdayCommand;
+import commands.SetDetailsActivityValuesCommand;
+
+import models.Workday;
+import database.connections.WorkdayDataSource;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.TextView;
 
 public class DetailsActivity extends Activity {
 	
 	private Workday workday;
 	private WorkdayDataSource dataSource;
+	
+	private SetDetailsActivityValuesCommand setValuesCommand;
+	private GetWorkdayCommand getWorkdayCommand;
+	private DeleteWorkdayCommand deleteWorkdayCommand;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,66 +26,58 @@ public class DetailsActivity extends Activity {
 		setContentView(R.layout.details_activity);
 		
 		dataSource = new WorkdayDataSource(this);
-		dataSource.open();
+		
+		initializeCommands();
 		
 		Intent intent = getIntent();
 		workday = (Workday) intent.getSerializableExtra("databaseEntry");
-		setActivityValues(workday);
+		
+		setValuesCommand.execute(workday);
 	}
 	
 	@Override
 	protected void onResume()
 	{
-		dataSource.open();
 	    super.onResume();
 	    
-	    workday = dataSource.getWorkday(workday.getId());
-	    setActivityValues(workday);
+	    initializeCommands();
+	    
+	    workday = getWorkdayCommand.execute(workday.getId());
+	    
+	    setValuesCommand.execute(workday);
 	}
 	
 	@Override
 	protected void onPause()
 	{
-		dataSource.close();
+		clearReferences();
 	    super.onPause();
 	}
 	
-	private void setActivityValues(Workday workday)
+	private void initializeCommands()
 	{
-		TextView view;
-		view = (TextView) findViewById(R.id.date_value);
-		view.setText(workday.dateToString());
+		setValuesCommand = new SetDetailsActivityValuesCommand(this);
+		getWorkdayCommand = new GetWorkdayCommand(dataSource);
+		deleteWorkdayCommand = new DeleteWorkdayCommand(dataSource);
+	}
+	
+	private void clearReferences()
+	{
+		setValuesCommand.setActivityToNull();
+		setValuesCommand = null;
 		
-		view = (TextView) findViewById(R.id.shift_value);
-		view.setText(workday.getShift());
+		getWorkdayCommand.setDataSourceToNull();
+		getWorkdayCommand = null;
 		
-		view = (TextView) findViewById(R.id.job_value);
-		view.setText(workday.getJob());
-		
-		view = (TextView) findViewById(R.id.foreman_name_value);
-		view.setText(workday.getForemanName());
-		
-		view = (TextView) findViewById(R.id.payscale_value);
-		view.setText(Double.toString(workday.getPayScale()));
-		
-		view = (TextView) findViewById(R.id.overtime_payscale_value);
-		view.setText(Double.toString(workday.getOvertimePayScale()));
-		
-		view = (TextView) findViewById(R.id.hours_value);
-		view.setText(Double.toString(workday.getHours()));
-		
-		view = (TextView) findViewById(R.id.overtime_hours_value);
-		view.setText(Double.toString(workday.getOvertimeHours()));
-
-		view = (TextView) findViewById(R.id.comment_value);
-		view.setText(workday.getComment());
+		deleteWorkdayCommand.setDataSourceToNull();
+		deleteWorkdayCommand = null;
 	}
 	
 	public void onClick(View view)
 	{
 		if(view.getId() == R.id.edit_button)
 		{
-			dataSource.close();
+			clearReferences();
 			
 			Intent intent = new Intent(this, EditWorkdayActivity.class);
 		    intent.putExtra("databaseEntryToUpdate", workday);
@@ -84,8 +85,9 @@ public class DetailsActivity extends Activity {
 		}
 		else if(view.getId() == R.id.delete_button)
 		{
-			dataSource.deleteWorkday(workday);
-			dataSource.close();
+			deleteWorkdayCommand.execute(workday);
+			
+			clearReferences();
 			finish();
 		}
 	}

@@ -1,6 +1,15 @@
 package doug.workdaysapp;
 
 import java.util.Date;
+import java.util.List;
+
+import validators.ValidationResult;
+import validators.WorkdayValidator;
+
+import models.Workday;
+
+import commands.UpdateFormErrorMessagesCommand;
+import database.connections.WorkdayDataSource;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -11,11 +20,18 @@ import android.widget.EditText;
 public class AddWorkdayActivity extends Activity {
 
 	private WorkdayDataSource dataSource;
+	private WorkdayValidator validator;
+	
+	private UpdateFormErrorMessagesCommand updateErrorMessagesCommand; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_workday_activity);
+		
+		initializeCommands();
+		
+		validator = new WorkdayValidator();
 		
 		dataSource = new WorkdayDataSource(this);
 		dataSource.open();
@@ -24,15 +40,29 @@ public class AddWorkdayActivity extends Activity {
 	@Override
 	protected void onResume()
 	{
-		dataSource.open();
 	    super.onResume();
+	    
+	    dataSource.open();
+	    initializeCommands();
 	}
 	
 	@Override
 	protected void onPause()
 	{
 		dataSource.close();
+		clearReferences();
 	    super.onPause();
+	}
+	
+	private void initializeCommands()
+	{
+		updateErrorMessagesCommand = new UpdateFormErrorMessagesCommand(this);
+	}
+	
+	private void clearReferences()
+	{
+		updateErrorMessagesCommand.setActivityToNull();
+		updateErrorMessagesCommand = null;
 	}
 	
 	public void onClick(View view)
@@ -50,10 +80,22 @@ public class AddWorkdayActivity extends Activity {
 	    	Double overtimePayscale = parseDouble(((EditText) findViewById(R.id.overtime_payscale_value)).getText().toString());
 	    	String comment = ((EditText) findViewById(R.id.comment_value)).getText().toString();
 	    	
-	    	dataSource.createWorkday(date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
-	    	dataSource.close();
+	    	Workday workday = Workday.generateWorkday(date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
 	    	
-	    	finish();
+	    	List<ValidationResult> validationErrors = validator.validate(workday);
+	    	
+	    	if(validationErrors.isEmpty())
+	    	{
+	    		dataSource.createWorkday(workday);
+	    		dataSource.close();
+	    	
+	    		clearReferences();
+	    		finish();
+	    	}
+	    	else
+	    	{
+	    		updateErrorMessagesCommand.execute(validationErrors);
+	    	}
 	    }
 	}
 	

@@ -1,8 +1,11 @@
-package doug.workdaysapp;
+package database.connections;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import models.Workday;
+
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -41,27 +44,19 @@ public class WorkdayDataSource {
 	
 	// creates a workday and inserts it into database
 	public Workday createWorkday(
-			Date date, 
-			String shift, 
-			String job, 
-			String foremanName, 
-			double hours, 
-			double overtimeHours, 
-			double payScale,
-			double overtimePayScale,
-			String comment
+			Workday workday
 			)
 	{
 		ContentValues values = generateContentValues(
-				date, 
-				shift, 
-				job, 
-				foremanName, 
-				hours, 
-				overtimeHours, 
-				payScale, 
-				overtimePayScale, 
-				comment);
+				workday.getDate(), 
+				workday.getShift(), 
+				workday.getJob(), 
+				workday.getForemanName(), 
+				workday.getHours(), 
+				workday.getOvertimeHours(), 
+				workday.getPayscale(), 
+				workday.getOvertimePayscale(), 
+				workday.getComment());
 		
 		// inserts data into database
 		long insertId = database.insert(MySQLiteHelper.TABLE_NAME, null, values);
@@ -92,8 +87,8 @@ public class WorkdayDataSource {
 			String foremanName, 
 			double hours, 
 			double overtimeHours, 
-			double payScale,
-			double overtimePayScale,
+			double payscale,
+			double overtimePayscale,
 			String comment)
 	{
 		ContentValues values = new ContentValues();
@@ -123,10 +118,10 @@ public class WorkdayDataSource {
 				values.put(columnName, overtimeHours);
 				break;
 			case 7:
-				values.put(columnName, payScale);
+				values.put(columnName, payscale);
 				break;
 			case 8:
-				values.put(columnName, overtimePayScale);
+				values.put(columnName, overtimePayscale);
 				break;
 			case 9:
 				values.put(columnName, comment);
@@ -149,8 +144,8 @@ public class WorkdayDataSource {
 		workday.setForemanName(cursor.getString(4));
 		workday.setHours(cursor.getDouble(5));
 		workday.setOvertimeHours(cursor.getDouble(6));
-		workday.setPayScale(cursor.getDouble(7));
-		workday.setOvertimePayScale(cursor.getDouble(8));
+		workday.setPayscale(cursor.getDouble(7));
+		workday.setOvertimePayscale(cursor.getDouble(8));
 		workday.setComment(cursor.getString(9));
 
 		return workday;

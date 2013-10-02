@@ -1,4 +1,4 @@
-package doug.workdaysapp;
+package database.connections;
 
 
 import android.content.Context;

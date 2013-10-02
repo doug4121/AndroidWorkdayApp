@@ -21,6 +21,10 @@
 		        android:id="@+id/date_picker_value"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/date_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
             <TextView
 		        android:id="@+id/shift_label"
@@ -32,6 +36,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/shift_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/job_label"
@@ -43,6 +51,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/job_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/foreman_name_label"
@@ -54,6 +66,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/foreman_name_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/hours_label"
@@ -65,6 +81,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/hours_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/overtime_hours_label"
@@ -76,6 +96,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/overtime_hours_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/payscale_label"
@@ -87,6 +111,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/payscale_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/overtime_payscale_label"
@@ -98,6 +126,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/overtime_payscale_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <TextView
 		        android:id="@+id/comment_label"
@@ -109,6 +141,10 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:ems="10" />
+		    <TextView
+                android:id="@+id/comment_error_message"
+                android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"/>
 		
 		    <Button
 		        android:id="@+id/save_button"

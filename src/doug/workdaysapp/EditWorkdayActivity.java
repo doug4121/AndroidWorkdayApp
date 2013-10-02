@@ -1,6 +1,16 @@
 package doug.workdaysapp;
 
 import java.util.Date;
+import java.util.List;
+
+import validators.ValidationResult;
+import validators.WorkdayValidator;
+
+import models.Workday;
+
+import commands.SetFormValuesCommand;
+import commands.UpdateFormErrorMessagesCommand;
+import database.connections.WorkdayDataSource;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -13,12 +23,20 @@ import android.widget.EditText;
 public class EditWorkdayActivity extends Activity {
 
 	private WorkdayDataSource dataSource;
+	private WorkdayValidator validator;
+	
+	private UpdateFormErrorMessagesCommand updateErrorMessagesCommand;
+	private SetFormValuesCommand setFormValuesCommand;
 	private long id;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_workday_activity);
+		
+		initializeCommands();
+		
+		validator = new WorkdayValidator();
 		
 		dataSource = new WorkdayDataSource(this);
 		dataSource.open();
@@ -27,7 +45,7 @@ public class EditWorkdayActivity extends Activity {
 		Workday workday = (Workday) intent.getSerializableExtra("databaseEntryToUpdate");
 		id = workday.getId();
 		
-		setActivityValues(workday);
+		setFormValuesCommand.Execute(workday);
 	}
 
 	@Override
@@ -40,15 +58,32 @@ public class EditWorkdayActivity extends Activity {
 	@Override
 	protected void onResume()
 	{
-		dataSource.open();
 	    super.onResume();
+	    dataSource.open();
+	    initializeCommands();
 	}
 	
 	@Override
 	protected void onPause()
 	{
 		dataSource.close();
+		clearReferences();
 	    super.onPause();
+	}
+	
+	private void initializeCommands()
+	{
+		updateErrorMessagesCommand = new UpdateFormErrorMessagesCommand(this);
+	    setFormValuesCommand = new SetFormValuesCommand(this);
+	}
+	
+	private void clearReferences()
+	{
+		updateErrorMessagesCommand.setActivityToNull();
+		updateErrorMessagesCommand = null;
+		
+		setFormValuesCommand.setActivityToNull();
+		setFormValuesCommand = null;
 	}
 	
 	public void onClick(View view)
@@ -65,10 +100,22 @@ public class EditWorkdayActivity extends Activity {
 	    	Double overtimePayscale = parseDouble(((EditText) findViewById(R.id.overtime_payscale_value)).getText().toString());
 	    	String comment = ((EditText) findViewById(R.id.comment_value)).getText().toString();
 	    	
-	    	dataSource.editWorkday(id, date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
-	    	dataSource.close();
+	    	Workday workday = Workday.generateWorkday(id, date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
 	    	
-	    	finish();
+	    	List<ValidationResult> validationErrors = validator.validate(workday);
+	    	
+	    	if(validationErrors.isEmpty())
+	    	{
+		    	dataSource.editWorkday(id, date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
+		    	dataSource.close();
+		    	
+		    	clearReferences();
+		    	finish();
+	    	}
+	    	else
+	    	{
+	    		updateErrorMessagesCommand.execute(validationErrors);
+	    	}
 		}
 	}
 	
@@ -92,39 +139,4 @@ public class EditWorkdayActivity extends Activity {
 		
 		return outputNumber;
 	}
-	
-	@SuppressWarnings("deprecation")
-	private void setActivityValues(Workday workday)
-	{
-		EditText view;
-		
-		DatePicker picker = (DatePicker) findViewById(R.id.date_picker_value);
-		Date theDate = workday.getDate();
-		picker.updateDate(theDate.getYear(), theDate.getMonth(), theDate.getDate());
-		
-		view = (EditText) findViewById(R.id.shift_value);
-		view.setText(workday.getShift());
-		
-		view = (EditText) findViewById(R.id.job_value);
-		view.setText(workday.getJob());
-		
-		view = (EditText) findViewById(R.id.foreman_name_value);
-		view.setText(workday.getForemanName());
-		
-		view = (EditText) findViewById(R.id.payscale_value);
-		view.setText(Double.toString(workday.getPayScale()));
-		
-		view = (EditText) findViewById(R.id.overtime_payscale_value);
-		view.setText(Double.toString(workday.getOvertimePayScale()));
-		
-		view = (EditText) findViewById(R.id.hours_value);
-		view.setText(Double.toString(workday.getHours()));
-		
-		view = (EditText) findViewById(R.id.overtime_hours_value);
-		view.setText(Double.toString(workday.getOvertimeHours()));
-
-		view = (EditText) findViewById(R.id.comment_value);
-		view.setText(workday.getComment());
-	}
-
 }
