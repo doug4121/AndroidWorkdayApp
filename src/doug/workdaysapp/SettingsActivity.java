@@ -43,7 +43,7 @@ public class SettingsActivity extends Activity {
 		if(view.getId() == R.id.backup_button)
 		{
 			// generate backup
-			CSVWriter writer = new CSVWriter("OutputDatabase", this, dataSource);
+			CSVWriter writer = new CSVWriter("OutputDatabase", dataSource);
 			writer.write();
 		}
 	}

@@ -1,7 +1,7 @@
 package csv.writer;
 
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.List;
 
 import models.Workday;
@@ -12,45 +12,43 @@ import database.connections.MySQLiteHelper;
 import database.connections.WorkdayDataSource;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.os.Environment;
 
 public class CSVWriter {
 
 	private String fileName;
-	private Activity activity;
 	
 	private GetAllWorkdaysCommand getAllWorkdaysCommand;
 	
-	public CSVWriter(String fileName, Activity activity, WorkdayDataSource dataSource)
+	public CSVWriter(String fileName, WorkdayDataSource dataSource)
 	{
 		this.fileName = fileName;
-		this.activity = activity;
 		
 		getAllWorkdaysCommand = new GetAllWorkdaysCommand(dataSource);
 	}
 	
-	@SuppressWarnings("deprecation")
 	@SuppressLint("WorldReadableFiles")
 	public void write()
 	{
 		try{
-			FileOutputStream outStream = activity.openFileOutput(fileName + ".csv", Activity.MODE_WORLD_READABLE);
-			
-			OutputStreamWriter osw = new OutputStreamWriter(outStream);
+			File file = new File(Environment.getExternalStorageDirectory(), fileName + ".csv");
+			FileOutputStream outStream = new FileOutputStream(file);
 			
 			// column headers
+			String data = "";
 			String[] tableColumns = MySQLiteHelper.TABLE_COLUMNS;
-			osw.append(workdayColumnHeadersToString(tableColumns));
+			data += workdayColumnHeadersToString(tableColumns);
 			
 			// data
 			List<Workday> allWorkdays = getAllWorkdaysCommand.execute();
 			for(int i = 0; i < allWorkdays.size(); i++)
 			{
-				osw.append(workdayToString(allWorkdays.get(i)));
+				data += workdayToString(allWorkdays.get(i));
 			}
 			
-			osw.flush();
-			osw.close();
+			outStream.write(data.getBytes());
+			outStream.flush();
+			outStream.close();
 		}
 		catch(Exception e)
 		{
