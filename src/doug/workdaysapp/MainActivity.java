@@ -2,12 +2,14 @@ package doug.workdaysapp;
 
 import java.util.List;
 
+import commands.GetAllWorkdaysCommand;
+//import csv.writer.CSVWriter;
+
 import models.Workday;
 
 import database.connections.WorkdayDataSource;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,8 @@ public class MainActivity extends ListActivity{
 		
 	private WorkdayDataSource dataSource;
 	
+	private GetAllWorkdaysCommand getAllWorkdaysCommand;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -25,34 +29,57 @@ public class MainActivity extends ListActivity{
 		setContentView(R.layout.main);
 		
 		dataSource = new WorkdayDataSource(this);
-		dataSource.open();
+		initializeCommands();
 		
-		List<Workday> workdays = dataSource.getAllWorkdays();
+		List<Workday> workdays = getAllWorkdaysCommand.execute();
 		
 		ArrayAdapter<Workday> adapter = new ArrayAdapter<Workday>(this, android.R.layout.simple_list_item_1, workdays);
 		
 		setListAdapter(adapter);
+		
+		// test file creation
+		/*CSVWriter fileWriter = new CSVWriter("test", this, dataSource);
+		fileWriter.write();*/
 	}
 	
 	@Override
 	protected void onResume()
 	{
-		dataSource.open();
+	    super.onResume();
+	    initializeCommands();
 		
-		List<Workday> workdays = dataSource.getAllWorkdays();
+		List<Workday> workdays = getAllWorkdaysCommand.execute();
 		
 		ArrayAdapter<Workday> adapter = new ArrayAdapter<Workday>(this, android.R.layout.simple_list_item_1, workdays);
-		
 		setListAdapter(adapter);
-		
-	    super.onResume();
 	}
 	
 	@Override
 	protected void onPause()
 	{
-		dataSource.close();
+		clearReferences();
 	    super.onPause();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		clearReferences();
+		super.onDestroy();
+	}
+	
+	private void initializeCommands()
+	{
+		getAllWorkdaysCommand = new GetAllWorkdaysCommand(dataSource);
+	}
+	
+	private void clearReferences()
+	{
+		if(getAllWorkdaysCommand != null)
+		{
+			getAllWorkdaysCommand.setDataSourceToNull();
+			getAllWorkdaysCommand = null;
+		}
 	}
 	
 	@Override  
@@ -61,7 +88,6 @@ public class MainActivity extends ListActivity{
 
 	    Workday selectedWorkday = (Workday) l.getItemAtPosition(pos);
 	    
-	    dataSource.close();
 	    Intent intent = new Intent(this, DetailsActivity.class);
 	    intent.putExtra("databaseEntry", selectedWorkday);
 	    startActivity(intent);
@@ -69,12 +95,16 @@ public class MainActivity extends ListActivity{
 	
 	public void onClick(View view)
 	{		
-		if (view.getId() == R.id.add) {
-			Context context = this;
-			
-			Intent intent = new Intent(context, AddWorkdayActivity.class);
+		if (view.getId() == R.id.add)
+		{
+			Intent intent = new Intent(this, AddWorkdayActivity.class);
 			startActivity(intent);
 	    }
+		else if(view.getId() == R.id.settings)
+		{
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+		}
 	}
 
 }

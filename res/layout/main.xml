@@ -6,6 +6,7 @@
     
 	<LinearLayout
         android:id="@+id/group"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -15,6 +16,12 @@
             android:layout_height="wrap_content"
             android:onClick="onClick"
             android:text="@string/add_button" />
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="@string/settings_button" />
         
     </LinearLayout>
     

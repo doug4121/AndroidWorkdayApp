@@ -1,6 +1,5 @@
 package doug.workdaysapp;
 
-import java.util.Date;
 import java.util.List;
 
 import validators.ValidationResult;
@@ -8,14 +7,14 @@ import validators.WorkdayValidator;
 
 import models.Workday;
 
+import commands.CreateWorkdayCommand;
+import commands.GetFormValuesCommand;
 import commands.UpdateFormErrorMessagesCommand;
 import database.connections.WorkdayDataSource;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
-import android.widget.DatePicker;
-import android.widget.EditText;
 
 public class AddWorkdayActivity extends Activity {
 
@@ -23,6 +22,8 @@ public class AddWorkdayActivity extends Activity {
 	private WorkdayValidator validator;
 	
 	private UpdateFormErrorMessagesCommand updateErrorMessagesCommand; 
+	private GetFormValuesCommand getFormValuesCommand;
+	private CreateWorkdayCommand createWorkdayCommand;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,35 +35,55 @@ public class AddWorkdayActivity extends Activity {
 		validator = new WorkdayValidator();
 		
 		dataSource = new WorkdayDataSource(this);
-		dataSource.open();
 	}
 
 	@Override
 	protected void onResume()
 	{
 	    super.onResume();
-	    
-	    dataSource.open();
 	    initializeCommands();
 	}
 	
 	@Override
 	protected void onPause()
 	{
-		dataSource.close();
 		clearReferences();
 	    super.onPause();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		clearReferences();
+		super.onDestroy();
 	}
 	
 	private void initializeCommands()
 	{
 		updateErrorMessagesCommand = new UpdateFormErrorMessagesCommand(this);
+		getFormValuesCommand = new GetFormValuesCommand(this);
+		createWorkdayCommand = new CreateWorkdayCommand(dataSource);
 	}
 	
 	private void clearReferences()
 	{
-		updateErrorMessagesCommand.setActivityToNull();
-		updateErrorMessagesCommand = null;
+		if(updateErrorMessagesCommand != null)
+		{
+			updateErrorMessagesCommand.setActivityToNull();
+			updateErrorMessagesCommand = null;
+		}
+		
+		if( getFormValuesCommand != null)
+		{
+			getFormValuesCommand.setActivityToNull();
+			getFormValuesCommand = null;
+		}
+		
+		if(createWorkdayCommand != null)
+		{
+			createWorkdayCommand.setDataSourceToNull();
+			createWorkdayCommand = null;
+		}
 	}
 	
 	public void onClick(View view)
@@ -70,26 +91,14 @@ public class AddWorkdayActivity extends Activity {
 	    // what happens on save
 	    if (view.getId() == R.id.save_button) {
 	    	
-	    	Date date = getDate((DatePicker) findViewById(R.id.date_picker_value));
-	    	String shift = ((EditText) findViewById(R.id.shift_value)).getText().toString();
-	    	String job = ((EditText) findViewById(R.id.job_value)).getText().toString();
-	    	String foremanName = ((EditText) findViewById(R.id.foreman_name_value)).getText().toString();
-	    	Double hours = parseDouble(((EditText) findViewById(R.id.hours_value)).getText().toString());
-	    	Double overtimeHours = parseDouble(((EditText) findViewById(R.id.overtime_hours_value)).getText().toString());
-	    	Double payscale = parseDouble(((EditText) findViewById(R.id.payscale_value)).getText().toString());
-	    	Double overtimePayscale = parseDouble(((EditText) findViewById(R.id.overtime_payscale_value)).getText().toString());
-	    	String comment = ((EditText) findViewById(R.id.comment_value)).getText().toString();
-	    	
-	    	Workday workday = Workday.generateWorkday(date, shift, job, foremanName, hours, overtimeHours, payscale, overtimePayscale, comment);
+	    	Workday workday = getFormValuesCommand.execute();
 	    	
 	    	List<ValidationResult> validationErrors = validator.validate(workday);
 	    	
 	    	if(validationErrors.isEmpty())
 	    	{
-	    		dataSource.createWorkday(workday);
-	    		dataSource.close();
+	    		createWorkdayCommand.execute(workday);
 	    	
-	    		clearReferences();
 	    		finish();
 	    	}
 	    	else
@@ -97,26 +106,5 @@ public class AddWorkdayActivity extends Activity {
 	    		updateErrorMessagesCommand.execute(validationErrors);
 	    	}
 	    }
-	}
-	
-	private double parseDouble(String inputText)
-	{
-		Double outputNumber;
-		try
-		{
-			outputNumber = Double.parseDouble(inputText);
-		}
-		catch(NumberFormatException e)
-		{
-			outputNumber = 0.0;
-		}
-		
-		return outputNumber;
-	}
-
-	@SuppressWarnings("deprecation")
-	private Date getDate(DatePicker picker)
-	{
-		return new Date(picker.getYear(), picker.getMonth(), picker.getDayOfMonth());
 	}
 }

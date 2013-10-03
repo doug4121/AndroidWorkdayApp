@@ -54,6 +54,13 @@ public class DetailsActivity extends Activity {
 	    super.onPause();
 	}
 	
+	@Override
+	protected void onDestroy()
+	{
+		clearReferences();
+		super.onDestroy();
+	}
+	
 	private void initializeCommands()
 	{
 		setValuesCommand = new SetDetailsActivityValuesCommand(this);
@@ -63,14 +70,23 @@ public class DetailsActivity extends Activity {
 	
 	private void clearReferences()
 	{
-		setValuesCommand.setActivityToNull();
-		setValuesCommand = null;
+		if(setValuesCommand != null)
+		{
+			setValuesCommand.setActivityToNull();
+			setValuesCommand = null;
+		}
 		
-		getWorkdayCommand.setDataSourceToNull();
-		getWorkdayCommand = null;
+		if(getWorkdayCommand != null)
+		{
+			getWorkdayCommand.setDataSourceToNull();
+			getWorkdayCommand = null;
+		}
 		
-		deleteWorkdayCommand.setDataSourceToNull();
-		deleteWorkdayCommand = null;
+		if(deleteWorkdayCommand != null)
+		{
+			deleteWorkdayCommand.setDataSourceToNull();
+			deleteWorkdayCommand = null;
+		}
 	}
 	
 	public void onClick(View view)
@@ -87,7 +103,6 @@ public class DetailsActivity extends Activity {
 		{
 			deleteWorkdayCommand.execute(workday);
 			
-			clearReferences();
 			finish();
 		}
 	}

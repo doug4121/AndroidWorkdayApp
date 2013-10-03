@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="doug.workdaysapp"
-    android:versionCode="2"
-    android:versionName="1.1" >
+    android:versionCode="3"
+    android:versionName="1.2" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -33,6 +33,10 @@
         <activity
             android:name="doug.workdaysapp.EditWorkdayActivity"
             android:label="@string/title_activity_edit_workday" >
+        </activity>
+        <activity
+            android:name="doug.workdaysapp.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

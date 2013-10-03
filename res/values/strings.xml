@@ -4,15 +4,16 @@
     <string name="app_name">WorkDaysApp</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    
+
     <!-- Activities -->
     <string name="title_activity_edit_workday">Edi tWorkday</string>
     <string name="title_activity_add_workday">Add Workday</string>
     <string name="title_activity_details">Details</string>
-    
+    <string name="title_activity_settings">Settings</string>
+
     <!-- dates for details view -->
     <string name="dates"></string>
-    
+
     <!-- labels for forms -->
     <string name="date_label">Date:</string>
     <string name="shift_label">Shift:</string>
@@ -23,7 +24,7 @@
     <string name="payscale_label">Pay Scale:</string>
     <string name="overtime_payscale_label">Overtime Pay Scale:</string>
     <string name="comment_label">Comment:</string>
-    
+
     <!-- value variables -->
     <string name="shift_value"></string>
     <string name="job_value"></string>
@@ -33,7 +34,7 @@
     <string name="payscale_value"></string>
     <string name="overtime_payscale_value"></string>
     <string name="comment_value"></string>
-    
+
     <!-- error text messages -->
     <string name="shift_error_message"></string>
     <string name="job_error_message"></string>
@@ -43,14 +44,19 @@
     <string name="payscale_error_message"></string>
     <string name="overtime_payscale_error_message"></string>
     <string name="comment_error_message"></string>
-    
+
     <!-- labels for buttons -->
     <string name="add_button">Add New</string>
     <string name="save_button">Save</string>
     <string name="delete_button">Delete</string>
     <string name="edit_button">Edit</string>
-    
+    <string name="settings_button">Settings</string>
+    <string name="generate_csv_button">Generate CSV</string>
+
     <!-- colors -->
     <color name="error_color">#ff0000</color>
+    
+    <!-- backup location -->
+    <string name="backup_info">Backup is in /data/data/workdaysapp/files/OutputDatabase.csv</string>
 
 </resources>

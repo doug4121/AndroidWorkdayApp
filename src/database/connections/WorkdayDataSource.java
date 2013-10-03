@@ -199,8 +199,8 @@ public class WorkdayDataSource {
 			String foremanName, 
 			double hours, 
 			double overtimeHours, 
-			double payScale,
-			double overtimePayScale,
+			double payscale,
+			double overtimePayscale,
 			String comment)
 	{
 		ContentValues values = generateContentValues(
@@ -210,8 +210,8 @@ public class WorkdayDataSource {
 				foremanName, 
 				hours, 
 				overtimeHours, 
-				payScale, 
-				overtimePayScale, 
+				payscale, 
+				overtimePayscale, 
 				comment);
 		
 		String sqlId = "_id=" + id;

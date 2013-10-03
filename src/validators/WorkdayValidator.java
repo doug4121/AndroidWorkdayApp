@@ -150,14 +150,9 @@ public class WorkdayValidator {
 			message = "Job is null.";
 			validationResult = new ValidationResult(context, message);
 		}
-		else if (job.length() == 0)
+		else if(job.length() > 50)
 		{
-			message = "Job is an empty string.";
-			validationResult = new ValidationResult(context, message);
-		}
-		else if(job.length() > 25)
-		{
-			message = "Job is greater than 25 characters.";
+			message = "Job is greater than 50 characters.";
 			validationResult = new ValidationResult(context, message);
 		}
 		
@@ -175,14 +170,9 @@ public class WorkdayValidator {
 			message = "ForemanName is null.";
 			validationResult = new ValidationResult(context, message);
 		}
-		else if (foremanName.length() == 0)
+		else if(foremanName.length() > 50)
 		{
-			message = "ForemanName is an empty string.";
-			validationResult = new ValidationResult(context, message);
-		}
-		else if(foremanName.length() > 25)
-		{
-			message = "ForemanName is greater than 25 characters.";
+			message = "ForemanName is greater than 50 characters.";
 			validationResult = new ValidationResult(context, message);
 		}
 		
@@ -208,11 +198,6 @@ public class WorkdayValidator {
 		else if(hours > 10)
 		{
 			message = "Hours is greater than 10";
-			validationResult = new ValidationResult(context, message);
-		}
-		else if (hours == 0)
-		{
-			message ="Hours is empty";
 			validationResult = new ValidationResult(context, message);
 		}
 		
@@ -260,11 +245,6 @@ public class WorkdayValidator {
 			message = "Payscale is negative";
 			validationResult = new ValidationResult(context, message);
 		}
-		else if(payscale == 0)
-		{
-			message = "Payscale is zero";
-			validationResult = new ValidationResult(context, message);
-		}
 		
 		return validationResult;
 	}
@@ -285,11 +265,6 @@ public class WorkdayValidator {
 			message = "OvertimePayscale is negative";
 			validationResult = new ValidationResult(context, message);
 		}
-		else if(overtimePayscale == 0)
-		{
-			message = "OvertimePayscale is zero";
-			validationResult = new ValidationResult(context, message);
-		}
 		
 		return validationResult;
 	}
@@ -305,14 +280,9 @@ public class WorkdayValidator {
 			message = "Comment is null.";
 			validationResult = new ValidationResult(context, message);
 		}
-		else if (comment.length() == 0)
+		else if(comment.length() > 200)
 		{
-			message = "Comment is an empty string.";
-			validationResult = new ValidationResult(context, message);
-		}
-		else if(comment.length() > 100)
-		{
-			message = "Comment is greater than 25 characters.";
+			message = "Comment is greater than 200 characters.";
 			validationResult = new ValidationResult(context, message);
 		}
 		
